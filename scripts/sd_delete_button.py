@@ -10,7 +10,7 @@ except ImportError:
     print("Delete Button: send2trash is not installed. recycle bin cannot be used.")
     send2trash_installed = False
 
-delete_symbol = '\U0001f5d1'  # 🗑
+delete_symbol = '\U0000274c'  # ❌
 tab_current = None
 image_files = []
 
@@ -29,8 +29,15 @@ def sdelb_delete(delete_info):
             if not name.startswith('grid-'):
                 delete(image_file)
                 delete_info = f"{image_file} deleted"
+
+                txt_file = os.path.splitext(image_file)[0] + ".txt"
+                if os.path.exists(txt_file):
+                    delete(txt_file)
+                    delete_info = f"{image_file} and .txt deleted"
+                
                 break
         delete_info = "Could not delete anything"
+    delete_info = f"<b>{delete_info}</b>"
 
     return delete_info
 
