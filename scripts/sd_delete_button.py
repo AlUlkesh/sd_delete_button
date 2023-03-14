@@ -61,12 +61,13 @@ def on_after_component(component, **kwargs):
             fn=sdelb_delete,
             inputs=[sdelb_delete_info],
             outputs=[sdelb_delete_info],
+            _js=tab_current + "_sdelb_addEventListener",
         )
         tab_current = None
     elif element in ["txt2img_gallery", "img2img_gallery"]:
         tab_current = element.split("_", 1)[0]
         with gr.Column():
-            sdelb_delete_info = gr.HTML()
+            sdelb_delete_info = gr.HTML(elem_id=tab_current + "_sdelb_delete_info")
 script_callbacks.on_after_component(on_after_component)
 
 def on_image_saved(params : script_callbacks.ImageSaveParams):
