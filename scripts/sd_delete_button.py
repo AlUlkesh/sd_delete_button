@@ -2,6 +2,7 @@ import gradio as gr
 import os
 from modules import scripts
 from modules import script_callbacks
+from modules.ui_components import ToolButton
 from pathlib import Path
 try:
     from send2trash import send2trash
@@ -11,7 +12,7 @@ except ImportError:
     send2trash_installed = False
 
 delete_symbol = '\U0000274c'  # ❌
-tab_current = None
+tab_current = ""
 image_files = []
 
 def delete(filename):
@@ -54,16 +55,21 @@ class Script(scripts.Script):
 
 def on_after_component(component, **kwargs):
     global tab_current, sdelb_delete_info
+    send_extras_name_old = "extras_tab"
+    send_extras_name_new = tab_current + "_send_to_extras"
     element = kwargs.get("elem_id")
-    if element == "extras_tab" and tab_current is not None:
-        sdelb_delete_button = gr.Button(value=delete_symbol)
+    if element in (send_extras_name_old, send_extras_name_new) and tab_current != "":
+        if element == send_extras_name_old:
+            sdelb_delete_button = gr.Button(value=delete_symbol)
+        else:
+            sdelb_delete_button = ToolButton(delete_symbol, elem_id=tab_current + "_sdelb_delete_button", tooltip="Delete")
         sdelb_delete_button.click(
             fn=sdelb_delete,
             inputs=[sdelb_delete_info],
             outputs=[sdelb_delete_info],
             _js=tab_current + "_sdelb_addEventListener",
         )
-        tab_current = None
+        tab_current = ""
     elif element in ["txt2img_gallery", "img2img_gallery"]:
         tab_current = element.split("_", 1)[0]
         with gr.Column():
